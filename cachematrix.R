@@ -1,15 +1,32 @@
-## Put comments here that give an overall description of what your
-## functions do
+# This file contains two functions to enable the use of caching
+# to speed up computations involving inverting the same matrix more
+# than once.
 
-## Write a short comment describing this function
-
+## makeCacheMatrix creates a matrix that can cache its inverse
 makeCacheMatrix <- function(x = matrix()) {
+  cachedInv <- NULL
+  set <- function(y) {
+    x <<-y
+    cachedInv <<-NULL
+  }
+  get <- function() x
+  setinverse <- function(inverse) cachedInv <<- inverse
+  getinverse <- function() cachedInv
+  list(set = set, get = get, setinverse = setinverse, getinverse = getinverse)
 
 }
 
 
-## Write a short comment describing this function
-
+## cacheSolve returns the inverse of the given matrix, caching the inverse between
+## invocations.
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  inv <- x$getinverse()
+  if(!is.null(inv)) {
+    message("returning cached value")
+    return(inv)
+  }
+  data <- x$get()
+  inv <- solve(data, ...)
+  x$setinverse(inv)
+  return(inv)
 }
